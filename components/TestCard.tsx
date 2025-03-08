@@ -18,7 +18,7 @@ export default function TestCard({ test }: TestCardProps) {
       style={styles.card}
       onPress={() => {
         router.push({
-          pathname: "/(tabs)/tests/[id]",
+          pathname: "/tests/[id]",
           params: { id },
         });
       }}

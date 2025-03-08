@@ -13,6 +13,7 @@ export const tests = sqliteTable("tests", {
   schistoImage: text("schistoImage"),
   lfImage: text("lfImage"),
   helminthImage: text("helminthImage"),
+  syncStatus: text("syncStatus").notNull().default("pending"), // pending, synced, failed
 });
 
 // export const tests = sqliteTable("tests", {

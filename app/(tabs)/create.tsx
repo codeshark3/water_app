@@ -7,6 +7,7 @@ import { createTest } from "@/db/queries";
 import AppInput from "@/components/ui/AppInput";
 import AppSelect from "@/components/ui/AppSelect";
 import Screen from "@/components/ui/Screen";
+import { uploadTest } from "@/services/sync";
 
 type FormData = {
   name: string;
@@ -54,7 +55,7 @@ export default function CreateTest() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await createTest({
+      const testData = {
         participantId: data.participantId,
         name: data.name,
         age: data.age,
@@ -66,9 +67,24 @@ export default function CreateTest() {
         schistoImage: images.schisto,
         lfImage: images.lf,
         helminthImage: images.helminth,
-      });
+      };
 
-      Alert.alert("Success", "Test created successfully!");
+      const result = await uploadTest(testData);
+
+      if (result.offline) {
+        Alert.alert(
+          "Offline Mode",
+          "Test saved locally and will be uploaded when online"
+        );
+      } else if (result.success) {
+        Alert.alert("Success", "Test created and uploaded successfully!");
+      } else {
+        Alert.alert(
+          "Warning",
+          "Test saved locally but upload failed. Will retry later."
+        );
+      }
+
       reset();
       setImages({
         oncho: null,
@@ -76,7 +92,7 @@ export default function CreateTest() {
         lf: null,
         helminth: null,
       });
-      router.push("/tests");
+      router.push("/(tabs)/tests");
     } catch (error) {
       console.error("Error saving test:", error);
       Alert.alert("Error", "Failed to save test");
