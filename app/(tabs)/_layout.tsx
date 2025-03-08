@@ -35,23 +35,23 @@ export default function TabLayout() {
             <FontAwesome size={28} name="home" color={color} />
           ),
         }}
-      />
-      <Tabs.Screen
-        name="create"
-        options={{
-          title: "Create",
-
-          tabBarIcon: ({ color }) => (
-            <FontAwesome size={30} name="home" color={color} />
-          ),
-        }}
-      />
+      />{" "}
       <Tabs.Screen
         name="tests"
         options={{
           title: "Tests",
           tabBarIcon: ({ color }) => (
             <FontAwesome size={28} name="home" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="upload"
+        options={{
+          title: "Upload",
+
+          tabBarIcon: ({ color }) => (
+            <FontAwesome size={30} name="home" color={color} />
           ),
         }}
       />

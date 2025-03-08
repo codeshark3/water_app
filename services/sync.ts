@@ -6,20 +6,23 @@ import { checkConnectivity } from "@/utils/network";
 // Replace with your actual API endpoint
 const API_ENDPOINT = "https://your-api.com/tests";
 
-export async function uploadTest(testData: typeof tests.$inferInsert) {
+type TestData = typeof tests.$inferInsert;
+
+export const uploadTest = async (testData: TestData) => {
+  const isConnected = await checkConnectivity();
+
+  if (!isConnected) {
+    // Save locally with pending status
+    await db.insert(tests).values({
+      ...testData,
+      syncStatus: "pending",
+    });
+    return { success: true, offline: true };
+  }
+
   try {
-    const isConnected = await checkConnectivity();
-
-    if (!isConnected) {
-      // Save to local DB with pending status
-      await db.insert(tests).values({
-        ...testData,
-        syncStatus: "pending",
-      });
-      return { success: true, offline: true };
-    }
-
-    // If online, try to upload
+    // Try to upload to server
+    // Replace with your actual API endpoint
     const response = await fetch(API_ENDPOINT, {
       method: "POST",
       headers: {
@@ -28,26 +31,32 @@ export async function uploadTest(testData: typeof tests.$inferInsert) {
       body: JSON.stringify(testData),
     });
 
-    if (!response.ok) throw new Error("Upload failed");
-
-    // Save to local DB with synced status
-    await db.insert(tests).values({
-      ...testData,
-      syncStatus: "synced",
-    });
-
-    return { success: true, offline: false };
+    if (response.ok) {
+      // Save locally with synced status
+      await db.insert(tests).values({
+        ...testData,
+        syncStatus: "synced",
+      });
+      return { success: true, offline: false };
+    } else {
+      // Save locally with failed status
+      await db.insert(tests).values({
+        ...testData,
+        syncStatus: "failed",
+      });
+      return { success: false, offline: false };
+    }
   } catch (error) {
-    // Save to local DB with failed status
+    // Save locally with failed status
     await db.insert(tests).values({
       ...testData,
       syncStatus: "failed",
     });
-    return { success: false, error };
+    return { success: false, offline: false };
   }
-}
+};
 
-export async function syncPendingTests() {
+export const syncPendingTests = async () => {
   try {
     const pendingTests = await db
       .select()
@@ -56,6 +65,7 @@ export async function syncPendingTests() {
 
     for (const test of pendingTests) {
       try {
+        // Replace with your actual API endpoint
         const response = await fetch(API_ENDPOINT, {
           method: "POST",
           headers: {
@@ -64,15 +74,18 @@ export async function syncPendingTests() {
           body: JSON.stringify(test),
         });
 
-        if (!response.ok) throw new Error("Upload failed");
-
-        // Update sync status to synced
-        await db
-          .update(tests)
-          .set({ syncStatus: "synced" })
-          .where(eq(tests.id, test.id));
+        if (response.ok) {
+          await db
+            .update(tests)
+            .set({ syncStatus: "synced" })
+            .where(eq(tests.id, test.id));
+        } else {
+          await db
+            .update(tests)
+            .set({ syncStatus: "failed" })
+            .where(eq(tests.id, test.id));
+        }
       } catch (error) {
-        // Update sync status to failed
         await db
           .update(tests)
           .set({ syncStatus: "failed" })
@@ -82,4 +95,4 @@ export async function syncPendingTests() {
   } catch (error) {
     console.error("Sync error:", error);
   }
-}
+};

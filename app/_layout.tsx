@@ -13,7 +13,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-
+import OfflineNotice from "@/components/OfflineNotice";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 export const DATABASE_NAME = "water";
@@ -51,6 +51,7 @@ export default function RootLayout() {
         options={{ enableChangeListener: true }}
         useSuspense
       >
+        <OfflineNotice />
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>

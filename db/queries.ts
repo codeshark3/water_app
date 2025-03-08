@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { openDatabaseSync } from "expo-sqlite";
 import { tests } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 
 const expoDb = openDatabaseSync("water");
 const db = drizzle(expoDb);
@@ -28,7 +28,7 @@ export const getTestById = async (id: number) => {
 
 export const updateTest = async (
   id: number,
-  test: typeof tests.$inferInsert
+  test: Partial<typeof tests.$inferInsert>
 ) => {
   await db.update(tests).set(test).where(eq(tests.id, id));
   return test;
@@ -36,4 +36,31 @@ export const updateTest = async (
 
 export const deleteTest = async (id: number) => {
   await db.delete(tests).where(eq(tests.id, id));
+};
+
+export const getPendingTests = async () => {
+  const result = await db
+    .select()
+    .from(tests)
+    .where(or(eq(tests.syncStatus, "pending"), eq(tests.syncStatus, "failed")));
+  return result;
+};
+
+export const updateTestSyncStatus = async (
+  id: number,
+  status: "synced" | "failed" | "pending"
+) => {
+  await db.update(tests).set({ syncStatus: status }).where(eq(tests.id, id));
+};
+
+export const createTestWithSync = async (
+  test: typeof tests.$inferInsert,
+  isConnected: boolean
+) => {
+  const testWithStatus = {
+    ...test,
+    syncStatus: isConnected ? "synced" : "pending",
+  };
+  await createTest(testWithStatus);
+  return { success: true, offline: !isConnected };
 };

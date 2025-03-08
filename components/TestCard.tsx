@@ -12,7 +12,7 @@ interface TestCardProps {
 export default function TestCard({ test }: TestCardProps) {
   const router = useRouter();
   const { id } = test;
-
+  console.log(id);
   return (
     <TouchableOpacity
       style={styles.card}
@@ -30,6 +30,7 @@ export default function TestCard({ test }: TestCardProps) {
       <View style={styles.details}>
         <Text style={styles.detail}>Age: {test.age}</Text>
         <Text style={styles.detail}>Gender: {test.gender}</Text>
+        <Text style={styles.detail}>{test.syncStatus}</Text>
         <Text style={styles.detail}>Location: {test.location}</Text>
       </View>
     </TouchableOpacity>

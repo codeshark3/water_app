@@ -1,19 +1,13 @@
 import { Link } from "expo-router";
 import { Text, View } from "react-native";
-
+import Screen from "@/components/ui/Screen";
 export default function Index() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <Screen>
       <Text>Ehis screen.</Text>
       <Link href="/tests">
         <Text>Go to tests</Text>
       </Link>
-    </View>
+    </Screen>
   );
 }

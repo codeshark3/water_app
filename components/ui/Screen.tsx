@@ -1,5 +1,8 @@
-import React from "react";
-import { View, ViewStyle, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, ViewStyle, StyleSheet, SafeAreaView } from "react-native";
+import OfflineBar from "@/components/OfflineNotice";
+import Constants from "expo-constants";
+import { checkConnectivity } from "@/utils/network";
 
 interface ScreenProps {
   children: React.ReactNode;
@@ -7,12 +10,21 @@ interface ScreenProps {
 }
 
 export default function Screen({ children, style }: ScreenProps) {
-  return <View style={[styles.container, style]}>{children}</View>;
+  return (
+    <SafeAreaView style={[styles.container, style]}>
+      <View style={[styles.view, style]}>{children}</View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+
+    paddingTop: Constants.statusBarHeight,
+    paddingHorizontal: 15,
+  },
+  view: {
+    flex: 1,
   },
 });
