@@ -64,3 +64,16 @@ export const createTestWithSync = async (
   await createTest(testWithStatus);
   return { success: true, offline: !isConnected };
 };
+
+export const getLocalTestCount = async () => {
+  const count = await db.$count(
+    tests,
+    or(eq(tests.syncStatus, "pending"), eq(tests.syncStatus, "failed"))
+  );
+  return count;
+};
+
+export const getUploadedTestCount = async () => {
+  const count = await db.$count(tests, eq(tests.syncStatus, "synced"));
+  return count;
+};

@@ -7,6 +7,7 @@ import { createTest } from "@/db/queries";
 import AppInput from "@/components/ui/AppInput";
 import AppSelect from "@/components/ui/AppSelect";
 import Screen from "@/components/ui/Screen";
+import { useAuthStore } from "@/store/useAuthStore";
 import { uploadTest } from "@/services/sync";
 
 type FormData = {
@@ -30,6 +31,7 @@ const genderOptions = [
 ];
 
 export default function CreateTest() {
+  const { user } = useAuthStore();
   const { control, handleSubmit, reset } = useForm<FormData>();
   const [images, setImages] = useState<TestImages>({
     oncho: null,
@@ -62,14 +64,18 @@ export default function CreateTest() {
         gender: data.gender,
         location: data.location,
         createdAt: new Date().toISOString(),
-        createdBy: "user",
+        createdBy: user?.email,
         onchoImage: images.oncho,
         schistoImage: images.schisto,
         lfImage: images.lf,
         helminthImage: images.helminth,
       };
 
-      const result = await uploadTest(testData);
+      // Ensure createdBy is never undefined
+      const result = await uploadTest({
+        ...testData,
+        createdBy: user?.email ?? "unknown",
+      });
 
       if (result.offline) {
         Alert.alert(

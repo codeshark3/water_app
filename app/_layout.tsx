@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/expo-sqlite";
-import { Stack } from "expo-router";
+import { Slot, Stack, useRootNavigationState, Redirect } from "expo-router";
 import { openDatabaseSync, SQLiteProvider } from "expo-sqlite";
 import { Suspense, useEffect } from "react";
 import { ActivityIndicator } from "react-native";
@@ -16,45 +16,66 @@ import {
 import OfflineNotice from "@/components/OfflineNotice";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import { useFonts } from "expo-font";
+
 export const DATABASE_NAME = "water";
 
 export default function RootLayout() {
   const expoDb = openDatabaseSync(DATABASE_NAME);
   const db = drizzle(expoDb);
   const { success, error } = useMigrations(db, migrations);
+  SplashScreen.preventAutoHideAsync();
+
+  const [loaded] = useFonts({
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+  });
 
   useEffect(() => {
-    // Subscribe to network state changes
-    const unsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
-      if (state.isConnected && state.isInternetReachable) {
-        // Try to sync when we get online
-        syncPendingTests();
-      }
-    });
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
 
-    // Initial sync attempt
-    checkConnectivity().then((isConnected: boolean) => {
-      if (isConnected) {
-        syncPendingTests();
-      }
-    });
+  // useEffect(() => {
+  //   // Subscribe to network state changes
+  //   const unsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
+  //     if (state.isConnected && state.isInternetReachable) {
+  //       // Try to sync when we get online
+  //       syncPendingTests();
+  //     }
+  //   });
 
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  //   // Initial sync attempt
+  //   checkConnectivity().then((isConnected: boolean) => {
+  //     if (isConnected) {
+  //       syncPendingTests();
+  //     }
+  //   });
+
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <Suspense fallback={<ActivityIndicator size="large" />}>
       <SQLiteProvider
         databaseName={DATABASE_NAME}
         options={{ enableChangeListener: true }}
-        useSuspense
+        useSuspense={true}
       >
-        <OfflineNotice />
+        <Suspense fallback={<ActivityIndicator size="large" />}>
+          <OfflineNotice />
+        </Suspense>
         <Stack>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
+
         <StatusBar style="auto" />
       </SQLiteProvider>
     </Suspense>

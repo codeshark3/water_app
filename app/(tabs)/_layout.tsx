@@ -1,29 +1,34 @@
-import { Tabs } from "expo-router";
+import { Tabs, Redirect } from "expo-router";
 import React from "react";
 import { Platform } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
-// import { IconSymbol } from '@/components/ui/IconSymbol';
-// import TabBarBackground from '@/components/ui/TabBarBackground';
+
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useAuthStore } from "@/store/useAuthStore";
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-
+  const { user } = useAuthStore();
+  if (!user) {
+    return <Redirect href="/login" />;
+  }
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
         tabBarButton: HapticTab,
-        //tabBarBackground: "",
+        //tabBarBackground:>,
         tabBarStyle: Platform.select({
           ios: {
             // Use a transparent background on iOS to show the blur effect
             position: "absolute",
           },
-          default: {},
+          default: {
+            backgroundColor: Colors[colorScheme ?? "light"].background,
+          },
         }),
       }}
     >
@@ -41,7 +46,7 @@ export default function TabLayout() {
         options={{
           title: "Tests",
           tabBarIcon: ({ color }) => (
-            <FontAwesome size={28} name="home" color={color} />
+            <MaterialCommunityIcons size={28} name="test-tube" color={color} />
           ),
         }}
       />
@@ -51,7 +56,7 @@ export default function TabLayout() {
           title: "Upload",
 
           tabBarIcon: ({ color }) => (
-            <FontAwesome size={30} name="home" color={color} />
+            <FontAwesome size={30} name="cloud-upload" color={color} />
           ),
         }}
       />

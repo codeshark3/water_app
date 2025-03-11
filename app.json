@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.awentemi.water_app"
     },
     "web": {
       "bundler": "metro",
@@ -33,10 +34,19 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "4b657b8d-6f95-4591-9036-77622e6dffa5"
+      }
     }
   }
 }

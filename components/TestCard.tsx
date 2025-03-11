@@ -12,7 +12,7 @@ interface TestCardProps {
 export default function TestCard({ test }: TestCardProps) {
   const router = useRouter();
   const { id } = test;
-  console.log(id);
+
   return (
     <TouchableOpacity
       style={styles.card}
