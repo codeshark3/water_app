@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, Image } from "react-native";
 import { Link } from "expo-router";
-
 import AppInput from "@/components/ui/AppInput";
 import Screen from "@/components/ui/Screen";
 import { Text, Pressable } from "react-native";
 import { useAuthStore } from "@/store/useAuthStore";
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,14 +23,16 @@ export default function Login() {
 
   return (
     <Screen>
-      <View style={styles.container}>
+      <View className="flex-1 p-4 justify-center">
         <Image
           source={require("@/assets/images/icon.png")}
-          style={styles.logo}
+          className="w-24 h-24 self-center mb-6"
         />
-        <Text style={styles.title}>Login</Text>
+        <Text className="text-2xl font-bold mb-6 text-center">Login</Text>
 
-        {error && <Text style={styles.error}>{error}</Text>}
+        {error && (
+          <Text className="text-red-500 mb-4 text-center">{error}</Text>
+        )}
 
         <AppInput
           label="Email"
@@ -50,63 +52,21 @@ export default function Login() {
         />
 
         <Pressable
-          style={[styles.button, isLoading && styles.buttonDisabled]}
+          className={`${
+            isLoading ? "bg-gray-400" : "bg-blue-500"
+          } p-4 rounded-lg items-center mt-4`}
           onPress={handleLogin}
           disabled={isLoading}
         >
-          <Text style={styles.buttonText}>
+          <Text className="text-white text-base font-semibold">
             {isLoading ? "Loading..." : "Login"}
           </Text>
         </Pressable>
 
-        <Link href="/(auth)/register" style={styles.link}>
-          <Text>Don't have an account? Sign up</Text>
+        <Link href="/(auth)/register" className="mt-4 self-center">
+          <Text className="text-gray-600">Don't have an account? Sign up</Text>
         </Link>
       </View>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    justifyContent: "center",
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    alignSelf: "center",
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 24,
-    textAlign: "center",
-  },
-  button: {
-    backgroundColor: "#007AFF",
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 16,
-  },
-  buttonDisabled: {
-    backgroundColor: "#ccc",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  link: {
-    marginTop: 16,
-    alignSelf: "center",
-  },
-  error: {
-    color: "red",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-});

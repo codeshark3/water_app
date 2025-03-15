@@ -17,7 +17,7 @@ import OfflineNotice from "@/components/OfflineNotice";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
-
+import "@/global.css";
 export const DATABASE_NAME = "water";
 
 export default function RootLayout() {

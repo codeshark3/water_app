@@ -74,6 +74,8 @@ export default function Index() {
             View All Tests
           </Text>
         </Link>
+
+        <Text className="text-3xl text-red-800">ativewind</Text>
       </View>
     </Screen>
   );
