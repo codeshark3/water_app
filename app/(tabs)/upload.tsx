@@ -1,12 +1,12 @@
 // app/(tabs)/upload.tsx
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { syncPendingTests } from "@/services/sync";
-import { db } from "@/db/drizzle";
-import { tests } from "@/db/schema";
+import { syncPendingTests } from "~/services/sync";
+import { db } from "~/db/drizzle";
+import { tests } from "~/db/schema";
 import { eq, or } from "drizzle-orm";
-import Screen from "@/components/ui/Screen";
-import { checkConnectivity } from "@/utils/network";
+import Screen from "~/components/ui/Screen";
+import { checkConnectivity } from "~/utils/network";
 import * as Progress from "react-native-progress";
 
 export default function UploadScreen() {

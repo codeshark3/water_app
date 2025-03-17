@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList } from "react-native";
-import { getTests } from "@/db/queries";
-import { tests as testsSchema } from "@/db/schema";
-import Screen from "@/components/ui/Screen";
-import TestCard from "@/components/TestCard";
+import { getTests } from "~/db/queries";
+import { tests as testsSchema } from "~/db/schema";
+import Screen from "~/components/ui/Screen";
+import TestCard from "~/components/TestCard";
 
 import { Link } from "expo-router";
 import { StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import AppInput from "@/components/ui/AppInput";
+import AppInput from "~/components/ui/AppInput";
 // Add FAB component at the bottom of the screen
 const FloatingActionButton = () => {
   return (

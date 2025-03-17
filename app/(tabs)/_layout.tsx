@@ -2,12 +2,12 @@ import { Tabs, Redirect } from "expo-router";
 import React from "react";
 import { Platform } from "react-native";
 
-import { HapticTab } from "@/components/HapticTab";
+import { HapticTab } from "~/components/HapticTab";
+import { useColorScheme } from "~/lib/useColorScheme";
 
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAuthStore } from "~/store/useAuthStore";
+import { Colors } from "~/constants/Colors";
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { user } = useAuthStore();
@@ -17,7 +17,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: "#007AFF",
         headerShown: false,
         tabBarButton: HapticTab,
         //tabBarBackground:>,

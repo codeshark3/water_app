@@ -3,12 +3,12 @@ import { View, Text, Button, Image, Alert, ScrollView } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import { createTest } from "@/db/queries";
-import AppInput from "@/components/ui/AppInput";
-import AppSelect from "@/components/ui/AppSelect";
-import Screen from "@/components/ui/Screen";
-import { useAuthStore } from "@/store/useAuthStore";
-import { uploadTest } from "@/services/sync";
+import { createTest } from "~/db/queries";
+import AppInput from "~/components/ui/AppInput";
+import AppSelect from "~/components/ui/AppSelect";
+import Screen from "~/components/ui/Screen";
+import { useAuthStore } from "~/store/useAuthStore";
+import { uploadTest } from "~/services/sync";
 
 type FormData = {
   name: string;

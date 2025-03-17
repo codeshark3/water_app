@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { tests } from "@/db/schema";
+import { tests } from "~/db/schema";
 import { useRouter } from "expo-router";
 
 type Test = typeof tests.$inferSelect;

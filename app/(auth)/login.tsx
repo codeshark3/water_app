@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { View, Image } from "react-native";
 import { Link } from "expo-router";
-import AppInput from "@/components/ui/AppInput";
-import Screen from "@/components/ui/Screen";
-import { Text, Pressable } from "react-native";
-import { useAuthStore } from "@/store/useAuthStore";
+import AppInput from "~/components/ui/AppInput";
+import Screen from "~/components/ui/Screen";
+import { Pressable } from "react-native";
+import { Button } from "~/components/ui/button";
+import { Text } from "~/components/ui/text";
+import { useAuthStore } from "~/store/useAuthStore";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -25,7 +27,7 @@ export default function Login() {
     <Screen>
       <View className="flex-1 p-4 justify-center">
         <Image
-          source={require("@/assets/images/icon.png")}
+          source={require("~/assets/images/icon.png")}
           className="w-24 h-24 self-center mb-6"
         />
         <Text className="text-2xl font-bold mb-6 text-center">Login</Text>
@@ -51,7 +53,8 @@ export default function Login() {
           secureTextEntry
         />
 
-        <Pressable
+        <Button
+          variant="default"
           className={`${
             isLoading ? "bg-gray-400" : "bg-blue-500"
           } p-4 rounded-lg items-center mt-4`}
@@ -61,7 +64,7 @@ export default function Login() {
           <Text className="text-white text-base font-semibold">
             {isLoading ? "Loading..." : "Login"}
           </Text>
-        </Pressable>
+        </Button>
 
         <Link href="/(auth)/register" className="mt-4 self-center">
           <Text className="text-gray-600">Don't have an account? Sign up</Text>

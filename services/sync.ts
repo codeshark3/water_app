@@ -1,7 +1,7 @@
-import { db } from "@/db/drizzle";
-import { tests } from "@/db/schema";
+import { db } from "~/db/drizzle";
+import { tests } from "~/db/schema";
 import { eq } from "drizzle-orm";
-import { checkConnectivity } from "@/utils/network";
+import { checkConnectivity } from "~/utils/network";
 
 // Replace with your actual API endpoint
 const API_ENDPOINT = "https://your-api.com/tests";

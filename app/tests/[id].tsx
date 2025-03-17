@@ -1,8 +1,8 @@
 import { View, Text, ScrollView, Image } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { getTestById } from "@/db/queries";
-import { tests } from "@/db/schema";
-import Screen from "@/components/ui/Screen";
+import { getTestById } from "~/db/queries";
+import { tests } from "~/db/schema";
+import Screen from "~/components/ui/Screen";
 import { useState, useEffect } from "react";
 
 type Test = typeof tests.$inferSelect;

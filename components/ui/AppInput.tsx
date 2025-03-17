@@ -1,11 +1,7 @@
 import React from "react";
-import {
-  View,
-  TextInput,
-  TextInputProps,
-  StyleSheet,
-  Text,
-} from "react-native";
+import { View, TextInputProps, StyleSheet, Text } from "react-native";
+import { Input } from "~/components/ui/input";
+import { cn } from "~/lib/utils";
 
 interface AppInputProps extends TextInputProps {
   label?: string;
@@ -21,46 +17,19 @@ const AppInput: React.FC<AppInputProps> = ({
   ...props
 }) => {
   return (
-    <View style={[styles.container, containerStyle]}>
-      {label && <Text style={styles.label}>{label}</Text>}
-      <TextInput
-        style={[styles.input, error && styles.inputError, style]}
+    <View className="w-full mb-4">
+      {label && <Text className="text-sm font-medium mb-2">{label}</Text>}
+      <Input
+        className={cn(
+          "w-full h-10 rounded-md border border-gray-300 px-3 text-sm focus:border-blue-500 focus:ring-blue-500",
+          error && "border-red-500 focus:border-red-500"
+        )}
         placeholderTextColor="#1a1a1a"
         {...props}
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text className="text-red-500 text-sm mt-1">{error}</Text>}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: "#333",
-  },
-  input: {
-    width: "100%",
-    height: 48,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    backgroundColor: "#fff",
-  },
-  inputError: {
-    borderColor: "#ff3b30",
-  },
-  errorText: {
-    color: "#ff3b30",
-    fontSize: 14,
-    marginTop: 4,
-  },
-});
 
 export default AppInput;

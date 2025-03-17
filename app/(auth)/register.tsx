@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { View, StyleSheet, Text, Pressable } from "react-native";
 import { Link } from "expo-router";
 
-import AppInput from "@/components/ui/AppInput";
-import Screen from "@/components/ui/Screen";
-import { useAuthStore } from "@/store/useAuthStore";
+import AppInput from "~/components/ui/AppInput";
+import Screen from "~/components/ui/Screen";
+import { useAuthStore } from "~/store/useAuthStore";
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
