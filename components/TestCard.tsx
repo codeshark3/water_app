@@ -1,73 +1,69 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { tests } from "~/db/schema";
-import { useRouter } from "expo-router";
+import { useRouter, useNavigation } from "expo-router";
+import { Card } from "~/components/ui/card";
 
 type Test = typeof tests.$inferSelect;
 
 interface TestCardProps {
   test: Test;
 }
-
+const getStatusColor = (status: string | null | undefined) => {
+  switch (status) {
+    case "synced":
+      return "bg-green-200"; // Light green for synced
+    case "error":
+      return "bg-red-200"; // Light red for error
+    case "in-progress":
+      return "bg-yellow-200"; // Light yellow for syncing
+    default:
+      return "bg-gray-200"; // Default (pending)
+  }
+};
 export default function TestCard({ test }: TestCardProps) {
   const router = useRouter();
   const { id } = test;
 
   return (
     <TouchableOpacity
-      style={styles.card}
+      className="mb-3"
       onPress={() => {
         router.push({
           pathname: "/tests/[id]",
           params: { id },
         });
+        router.push(`/tests/${id}`);
       }}
     >
-      <View style={styles.header}>
-        <Text style={styles.name}>{test.name}</Text>
-        <Text style={styles.id}>ID: {test.participantId}</Text>
-      </View>
-      <View style={styles.details}>
-        <Text style={styles.detail}>Age: {test.age}</Text>
-        <Text style={styles.detail}>Gender: {test.gender}</Text>
-        <Text style={styles.detail}>{test.syncStatus}</Text>
-        <Text style={styles.detail}>Location: {test.location}</Text>
-      </View>
+      <Card className="p-4">
+        <View className="flex-row justify-between items-center mb-2">
+          <Text className="text-lg font-bold">{test.name}</Text>
+          <Text className="text-md text-gray-500">
+            ID: {test.participantId}
+          </Text>
+        </View>
+        <View className="gap-1">
+          {test.syncStatus ? (
+            <Text className="text-md text-gray-700">
+              sync: {test.syncStatus}
+            </Text>
+          ) : (
+            <Text className="text-md text-gray-700">sync: pending</Text>
+          )}
+
+          <Text className="text-md text-gray-700">
+            Location: {test.location}
+          </Text>
+        </View>
+        <View
+          className={`gap-1 p-2 rounded ${getStatusColor(test.syncStatus)}`}
+        >
+          <Text className="text-md text-red-700">
+            sync: {test.syncStatus || "pending"}
+          </Text>
+        </View>
+      </Card>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "white",
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  id: {
-    fontSize: 14,
-    color: "#666",
-  },
-  details: {
-    gap: 4,
-  },
-  detail: {
-    fontSize: 14,
-    color: "#444",
-  },
-});

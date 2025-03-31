@@ -7,7 +7,7 @@ import { useColorScheme } from "~/lib/useColorScheme";
 
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAuthStore } from "~/store/useAuthStore";
-import { Colors } from "~/constants/Colors";
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { user } = useAuthStore();
@@ -17,19 +17,44 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#007AFF",
+        tabBarActiveTintColor:
+          colorScheme.colorScheme === "dark" ? "#fff" : "#007AFF",
+        tabBarInactiveTintColor:
+          colorScheme.colorScheme === "dark" ? "#9BA1A6" : "#687076",
         headerShown: false,
         tabBarButton: HapticTab,
-        //tabBarBackground:>,
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
             position: "absolute",
+            backgroundColor: "transparent",
+            borderTopWidth: 0,
+            elevation: 0,
+            height: 90,
+            paddingBottom: 20,
           },
           default: {
-            backgroundColor: Colors[colorScheme ?? "light"].background,
+            backgroundColor:
+              colorScheme.colorScheme === "dark" ? "#151718" : "#FFFFFA",
+            borderTopColor:
+              colorScheme.colorScheme === "dark" ? "#2D2D2D" : "#E5E5E5",
+            borderTopWidth: 1,
+            height: 65,
+            paddingBottom: 10,
+            elevation: 8,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: -2,
+            },
+            shadowOpacity: 0.1,
+            shadowRadius: 3,
           },
         }),
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "500",
+          marginTop: 2,
+        },
       }}
     >
       <Tabs.Screen
@@ -45,6 +70,7 @@ export default function TabLayout() {
         name="tests"
         options={{
           title: "Tests",
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons size={28} name="test-tube" color={color} />
           ),

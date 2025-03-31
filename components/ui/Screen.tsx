@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, ViewStyle, StyleSheet, SafeAreaView } from "react-native";
-import OfflineBar from "@/components/OfflineNotice";
+import OfflineBar from "~/components/OfflineNotice";
 import Constants from "expo-constants";
-import { checkConnectivity } from "@/utils/network";
+import { checkConnectivity } from "~/utils/network";
 
 interface ScreenProps {
   children: React.ReactNode;

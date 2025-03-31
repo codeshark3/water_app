@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Modal } from "react-native";
+import { useColorScheme } from "react-native";
+import { cn } from "~/lib/utils";
 
 interface Option {
   label: string;
@@ -27,21 +29,46 @@ export default function AppSelect({
 }: AppSelectProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const selectedOption = options.find((opt) => opt.value === value);
+  const colorScheme = useColorScheme();
+  const isDarkColorScheme = colorScheme === "dark";
 
   return (
-    <View style={[styles.container, containerStyle]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+    <View className="w-full mb-4">
+      {label && (
+        <Text
+          className={cn(
+            isDarkColorScheme ? "#6b7280" : "#9ca3af",
+            "text-sm font-medium mb-2"
+          )}
+        >
+          {label}
+        </Text>
+      )}
 
       <TouchableOpacity
-        style={[styles.select, error && styles.selectError]}
+        className={cn(
+          "w-full h-10 rounded-md border border-gray-300 px-3 justify-center bg-white dark:bg-gray-800",
+          error && "border-red-500"
+        )}
         onPress={() => setModalVisible(true)}
       >
-        <Text style={[styles.selectText, !value && styles.placeholder]}>
+        <Text
+          className={cn(
+            "text-sm",
+            value
+              ? isDarkColorScheme
+                ? "text-white"
+                : "text-black"
+              : isDarkColorScheme
+              ? "text-gray-400"
+              : "text-gray-500"
+          )}
+        >
           {selectedOption?.label || placeholder}
         </Text>
       </TouchableOpacity>
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text className="text-red-500 text-sm mt-1">{error}</Text>}
 
       <Modal
         visible={modalVisible}
@@ -49,33 +76,53 @@ export default function AppSelect({
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{label || "Select"}</Text>
+        <View className="flex-1 justify-end bg-black/50">
+          <View
+            className={cn(
+              "rounded-t-2xl p-4",
+              isDarkColorScheme ? "bg-gray-800" : "bg-white"
+            )}
+          >
+            <Text
+              className={cn(
+                "text-lg font-bold mb-4 text-center",
+                isDarkColorScheme ? "text-white" : "text-black"
+              )}
+            >
+              {label || "Select"}
+            </Text>
+
             {options.map((option) => (
               <TouchableOpacity
                 key={option.value}
-                style={styles.option}
+                className="py-3 border-b border-gray-200 dark:border-gray-700"
                 onPress={() => {
                   onValueChange(option.value);
                   setModalVisible(false);
                 }}
               >
                 <Text
-                  style={[
-                    styles.optionText,
-                    value === option.value && styles.selectedOption,
-                  ]}
+                  className={cn(
+                    "text-base text-center",
+                    value === option.value
+                      ? "text-blue-500 font-bold"
+                      : isDarkColorScheme
+                      ? "text-white"
+                      : "text-black"
+                  )}
                 >
                   {option.label}
                 </Text>
               </TouchableOpacity>
             ))}
+
             <TouchableOpacity
-              style={styles.cancelButton}
+              className="mt-4 py-3"
               onPress={() => setModalVisible(false)}
             >
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text className="text-base text-red-500 text-center font-bold">
+                Cancel
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -83,81 +130,3 @@ export default function AppSelect({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: "#333",
-  },
-  select: {
-    width: "100%",
-    height: 48,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    justifyContent: "center",
-    backgroundColor: "#fff",
-  },
-  selectError: {
-    borderColor: "#ff3b30",
-  },
-  selectText: {
-    fontSize: 16,
-    color: "#000",
-  },
-  placeholder: {
-    color: "#666",
-  },
-  errorText: {
-    color: "#ff3b30",
-    fontSize: 14,
-    marginTop: 4,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    padding: 16,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  option: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  optionText: {
-    fontSize: 16,
-    color: "#000",
-    textAlign: "center",
-  },
-  selectedOption: {
-    color: "#007AFF",
-    fontWeight: "bold",
-  },
-  cancelButton: {
-    marginTop: 16,
-    paddingVertical: 12,
-  },
-  cancelText: {
-    fontSize: 16,
-    color: "#ff3b30",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-});

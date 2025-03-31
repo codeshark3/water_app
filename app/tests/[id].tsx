@@ -4,9 +4,20 @@ import { getTestById } from "~/db/queries";
 import { tests } from "~/db/schema";
 import Screen from "~/components/ui/Screen";
 import { useState, useEffect } from "react";
-
+import { cn } from "~/lib/utils";
 type Test = typeof tests.$inferSelect;
-
+const getStatusColor = (status: string | null | undefined) => {
+  switch (status) {
+    case "synced":
+      return "bg-green-200"; // Light green for synced
+    case "error":
+      return "bg-red-200"; // Light red for error
+    case "in-progress":
+      return "bg-yellow-200"; // Light yellow for syncing
+    default:
+      return "bg-gray-200"; // Default (pending)
+  }
+};
 export default function TestDetails() {
   const { id } = useLocalSearchParams();
   const [test, setTest] = useState<Test | null>(null);
@@ -32,89 +43,94 @@ export default function TestDetails() {
   return (
     <Screen>
       <ScrollView>
-        <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20 }}>
-          Test Details
-        </Text>
+        <Text className="text-2xl font-bold mb-5">Test Details</Text>
 
-        <View style={{ gap: 16 }}>
-          <View>
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Name</Text>
-            <Text style={{ fontSize: 18 }}>{test.name}</Text>
-          </View>
-
-          <View>
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-              Participant ID
-            </Text>
-            <Text style={{ fontSize: 18 }}>{test.participantId}</Text>
-          </View>
-
-          <View>
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Age</Text>
-            <Text style={{ fontSize: 18 }}>{test.age}</Text>
-          </View>
-
-          <View>
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Gender</Text>
-            <Text style={{ fontSize: 18 }}>{test.gender}</Text>
-          </View>
-
-          <View>
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Location</Text>
-            <Text style={{ fontSize: 18 }}>{test.location}</Text>
-          </View>
-          <View>
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-              Sync Status
-            </Text>
-            <Text style={{ fontSize: 18 }}>{test.syncStatus}</Text>
-          </View>
-
-          {test.onchoImage && (
-            <View>
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                Oncho Image
-              </Text>
-              <Image
-                source={{ uri: test.onchoImage }}
-                style={{ width: 200, height: 200, marginTop: 8 }}
-              />
+        <View className="gap-4">
+          <View className="flex-row gap-4">
+            <View className="flex-1">
+              <Text className="text-base font-bold">Name</Text>
+              <Text className="text-lg">{test.name}</Text>
             </View>
-          )}
 
-          {test.schistoImage && (
-            <View>
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                Schisto Image
-              </Text>
-              <Image
-                source={{ uri: test.schistoImage }}
-                style={{ width: 200, height: 200, marginTop: 8 }}
-              />
+            <View className="flex-1">
+              <Text className="text-base font-bold">Participant ID</Text>
+              <Text className="text-lg">{test.participantId}</Text>
             </View>
-          )}
+          </View>
 
-          {test.lfImage && (
-            <View>
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>LF Image</Text>
-              <Image
-                source={{ uri: test.lfImage }}
-                style={{ width: 200, height: 200, marginTop: 8 }}
-              />
+          <View className="flex-row gap-4">
+            <View className="flex-1">
+              <Text className="text-base font-bold">Age</Text>
+              <Text className="text-lg">{test.age}</Text>
             </View>
-          )}
 
-          {test.helminthImage && (
-            <View>
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                Helminth Image
-              </Text>
-              <Image
-                source={{ uri: test.helminthImage }}
-                style={{ width: 200, height: 200, marginTop: 8 }}
-              />
+            <View className="flex-1">
+              <Text className="text-base font-bold">Gender</Text>
+              <Text className="text-lg">{test.gender}</Text>
             </View>
-          )}
+          </View>
+
+          <View className="flex-row gap-4">
+            <View className="flex-1">
+              <Text className="text-base font-bold">Location</Text>
+              <Text className="text-lg">{test.location}</Text>
+            </View>
+            <View
+              className={`flex-1 rounded-md px-2 py-1 text-center text-sm font-medium ${
+                test.syncStatus === "synced"
+                  ? "bg-emerald-500 text-white"
+                  : test.syncStatus === "error"
+                  ? "bg-red-500 text-white"
+                  : "bg-gray-500 text-white"
+              }`}
+            >
+              <Text className="text-white">sync: {test.syncStatus}</Text>
+            </View>
+          </View>
+
+          <View className="flex-row gap-4 justify-center items-center ">
+            {test.onchoImage && (
+              <View className="flex-1 px-1">
+                <Text className="text-base font-bold">Oncho Image</Text>
+                <Image
+                  source={{ uri: test.onchoImage }}
+                  className="w-[200px] h-[200px] mt-2"
+                />
+              </View>
+            )}
+
+            {test.schistoImage && (
+              <View className="flex-1">
+                <Text className="text-base font-bold">Schisto Image</Text>
+                <Image
+                  source={{ uri: test.schistoImage }}
+                  className="w-[200px] h-[200px] mt-2"
+                />
+              </View>
+            )}
+          </View>
+
+          <View className="flex-row gap-4">
+            {test.lfImage && (
+              <View className="flex-1">
+                <Text className="text-base font-bold">LF Image</Text>
+                <Image
+                  source={{ uri: test.lfImage }}
+                  className="w-[200px] h-[200px] mt-2"
+                />
+              </View>
+            )}
+
+            {test.helminthImage && (
+              <View className="flex-1">
+                <Text className="text-base font-bold">Helminth Image</Text>
+                <Image
+                  source={{ uri: test.helminthImage }}
+                  className="w-[200px] h-[200px] mt-2"
+                />
+              </View>
+            )}
+          </View>
         </View>
       </ScrollView>
     </Screen>
