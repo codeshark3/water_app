@@ -115,7 +115,7 @@ export default function CreateTest() {
           <Controller
             control={control}
             name="participantId"
-            rules={{ required: "Participant ID is required" }}
+            // rules={{ required: "Participant ID is required" }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <AppInput
                 label="Participant ID"
@@ -130,7 +130,7 @@ export default function CreateTest() {
           <Controller
             control={control}
             name="name"
-            rules={{ required: "Name is required" }}
+            // rules={{ required: "Name is required" }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <AppInput
                 label="Name"
@@ -146,7 +146,7 @@ export default function CreateTest() {
               <Controller
                 control={control}
                 name="age"
-                rules={{ required: "Age is required" }}
+                // rules={{ required: "Age is required" }}
                 render={({
                   field: { onChange, value },
                   fieldState: { error },
@@ -168,7 +168,7 @@ export default function CreateTest() {
               <Controller
                 control={control}
                 name="gender"
-                rules={{ required: "Gender is required" }}
+                // rules={{ required: "Gender is required" }}
                 render={({
                   field: { onChange, value },
                   fieldState: { error },
@@ -189,7 +189,7 @@ export default function CreateTest() {
           <Controller
             control={control}
             name="location"
-            rules={{ required: "Location is required" }}
+            // rules={{ required: "Location is required" }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <AppInput
                 label="Location"

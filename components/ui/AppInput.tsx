@@ -29,7 +29,7 @@ const AppInput: React.FC<AppInputProps> = ({
       {label && (
         <Text
           className={cn(
-            isDarkColorScheme ? "#6b7280" : "#9ca3af",
+            isDarkColorScheme ? "text-gray-500" : "text-gray-400",
             "text-sm font-medium mb-2"
           )}
         >
@@ -38,10 +38,10 @@ const AppInput: React.FC<AppInputProps> = ({
       )}
       <Input
         className={cn(
-          "w-full h-10 rounded-md border border-gray-300 px-3 text-sm focus:border-blue-500 focus:ring-blue-500",
+          `w-full h-10 rounded-md border border-gray-300 ${isDarkColorScheme ? "text-white" : "text-black"} px-3 text-sm focus:border-blue-500 focus:ring-blue-500`,
           error && "border-red-500 focus:border-red-500"
         )}
-        placeholderTextColor={isDarkColorScheme ? "#6b7280" : "#9ca3af"}
+        placeholderTextColor={isDarkColorScheme ? "text-gray-500" : "text-gray-400"}
         {...props}
       />
       {error && <Text className="text-red-500 text-sm mt-1">{error}</Text>}
