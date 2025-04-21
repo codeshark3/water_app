@@ -6,6 +6,8 @@ import m0001 from './0001_sharp_molecule_man.sql';
 import m0002 from './0002_narrow_strong_guy.sql';
 import m0003 from './0003_pretty_vapor.sql';
 import m0004 from './0004_white_lilith.sql';
+import m0005 from './0005_romantic_quasar.sql';
+import m0006 from './0006_flowery_echo.sql';
 
   export default {
     journal,
@@ -14,7 +16,9 @@ import m0004 from './0004_white_lilith.sql';
 m0001,
 m0002,
 m0003,
-m0004
+m0004,
+m0005,
+m0006
     }
   }
   

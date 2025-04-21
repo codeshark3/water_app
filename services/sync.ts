@@ -2,25 +2,44 @@ import { db } from "~/db/drizzle";
 import { tests } from "~/db/schema";
 import { eq, or } from "drizzle-orm";
 import { checkConnectivity } from "~/utils/network";
-import * as FileSystem from 'expo-file-system';
+import axios from "axios";
 
 // Replace with your actual API endpoint
-const API_ENDPOINT = "http://192.168.2.153:5328/api/python";
+const API_ENDPOINT = "http://192.168.230.153:3000/flask-api/python";
 
 type TestData = typeof tests.$inferInsert;
 
-const convertImageToBase64 = async (uri: string | null): Promise<string | null> => {
-  if (!uri) return null;
+// Function to convert base64/dataURL to Blob
+function dataURLtoBlob(dataurl: string) {
   try {
-    const base64 = await FileSystem.readAsStringAsync(uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-    return base64;
+    // Check if it's a data URL (starts with data:)
+    if (dataurl.startsWith('data:')) {
+      const arr = dataurl.split(',');
+      const match = arr[0].match(/:(.*?);/);
+      if (!match) throw new Error('Invalid data URL format');
+      const mime = match[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while(n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], {type: mime});
+    } else {
+      // Handle plain base64 string
+      const byteString = atob(dataurl);
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([ab], { type: 'image/jpeg' }); // Default to JPEG if no mime type
+    }
   } catch (error) {
-    console.error("Error converting image to base64:", error);
-    return null;
+    console.error('Error converting image:', error);
+    throw new Error('Invalid image data');
   }
-};
+}
 
 export const uploadTest = async (testData: TestData) => {
   const isConnected = await checkConnectivity();
@@ -35,45 +54,63 @@ export const uploadTest = async (testData: TestData) => {
   }
 
   try {
-    // Convert images to base64
-    const [onchoBase64, schistoBase64, lfBase64, helminthBase64] = await Promise.all([
-      convertImageToBase64(testData.onchoImage ?? null),
-      convertImageToBase64(testData.schistoImage ?? null),
-      convertImageToBase64(testData.lfImage ?? null),
-      convertImageToBase64(testData.helminthImage ?? null),
-    ]);
+    // Create FormData object
+    const formData = new FormData();
+    
+    // Add all test data fields to FormData
+    formData.append('participantId', testData.participantId);
+    formData.append('name', testData.name);
+    formData.append('age', testData.age.toString());
+    formData.append('gender', testData.gender);
+    formData.append('location', testData.location);
+    formData.append('createdAt', testData.createdAt);
+    formData.append('createdBy', testData.createdBy);
+    
+    // Add image data if present
+    if (testData.onchoImage) {
+      const blob = dataURLtoBlob(testData.onchoImage);
+      formData.append('onchoImage', blob, 'onchoImage.jpg');
+    }
+    if (testData.schistoImage) {
+      const blob = dataURLtoBlob(testData.schistoImage);
+      formData.append('schistoImage', blob, 'schistoImage.jpg');
+    }
+    if (testData.lfImage) {
+      const blob = dataURLtoBlob(testData.lfImage);
+      formData.append('lfImage', blob, 'lfImage.jpg');
+    }
+    if (testData.helminthImage) {
+      const blob = dataURLtoBlob(testData.helminthImage);
+      formData.append('helminthImage', blob, 'helminthImage.jpg');
+    }
 
-    const processedTestData = {
-      participantId: testData.participantId,
-      name: testData.name,
-      age: testData.age,
-      gender: testData.gender,
-      location: testData.location,
-      createdAt: testData.createdAt,
-      createdBy: testData.createdBy,
-      onchoImage: onchoBase64,
-      schistoImage: schistoBase64,
-      lfImage: lfBase64,
-      helminthImage: helminthBase64,
-    };
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
+    console.log("Sending request to:", API_ENDPOINT);
+    console.log("FormData contents:", Object.fromEntries(formData.entries()));
+    
     const response = await fetch(API_ENDPOINT, {
       method: "POST",
+      // No need to set Content-Type header - browser sets it automatically with boundary
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
       },
-      body: JSON.stringify(processedTestData),
-      signal: controller.signal,
+      body: formData,
     }).catch(error => {
       console.error("Network error:", error);
       throw new Error("Network request failed. Please check your connection and try again.");
     });
-    clearTimeout(timeoutId);
 
-    const responseData = await response.json();
+    
+    const responseText = await response.text();
+    console.log("Raw response:", responseText);
+    
+    let responseData;
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (error) {
+      console.error("Error parsing JSON response:", error);
+      throw new Error("Invalid response from server. Please try again.");
+    }
+    
     console.log("Upload response:", responseData);
 
     if (response.ok) {
@@ -111,13 +148,43 @@ export const syncPendingTests = async () => {
 
     for (const test of pendingTests) {
       try {
+        // Create FormData object
+        const formData = new FormData();
+        
+        // Add all test data fields to FormData
+        formData.append('participantId', test.participantId);
+        formData.append('name', test.name);
+        formData.append('age', test.age.toString());
+        formData.append('gender', test.gender);
+        formData.append('location', test.location);
+        formData.append('createdAt', test.createdAt);
+        formData.append('createdBy', test.createdBy);
+        
+        // Add image data if present
+        if (test.onchoImage) {
+          const blob = dataURLtoBlob(test.onchoImage);
+          formData.append('onchoImage', blob, 'onchoImage.jpg');
+        }
+        if (test.schistoImage) {
+          const blob = dataURLtoBlob(test.schistoImage);
+          formData.append('schistoImage', blob, 'schistoImage.jpg');
+        }
+        if (test.lfImage) {
+          const blob = dataURLtoBlob(test.lfImage);
+          formData.append('lfImage', blob, 'lfImage.jpg');
+        }
+        if (test.helminthImage) {
+          const blob = dataURLtoBlob(test.helminthImage);
+          formData.append('helminthImage', blob, 'helminthImage.jpg');
+        }
+
         // Replace with your actual API endpoint
         const response = await fetch(API_ENDPOINT, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
-          body: JSON.stringify(test),
+          body: formData,
         });
 
         const responseData = await response.json();

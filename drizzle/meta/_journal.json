@@ -36,6 +36,20 @@
       "when": 1741444612779,
       "tag": "0004_white_lilith",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1745257937490,
+      "tag": "0005_romantic_quasar",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1745258073673,
+      "tag": "0006_flowery_echo",
+      "breakpoints": true
     }
   ]
 }

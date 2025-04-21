@@ -91,13 +91,13 @@ export default function CreateTest() {
         );
       }
 
-      reset();
-      setImages({
-        oncho: null,
-        schisto: null,
-        lf: null,
-        helminth: null,
-      });
+      // reset();
+      // setImages({
+      //   oncho: null,
+      //   schisto: null,
+      //   lf: null,
+      //   helminth: null,
+      // });
       router.push("/(tabs)/tests");
     } catch (error) {
       console.error("Error saving test:", error);
