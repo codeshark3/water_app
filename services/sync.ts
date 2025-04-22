@@ -5,9 +5,14 @@ import { checkConnectivity } from "~/utils/network";
 import axios from "axios";
 
 // Replace with your actual API endpoint
-const API_ENDPOINT = "http://192.168.230.153:3000/flask-api/python";
+const API_ENDPOINT = "http://192.168.24.153:3000/flask-api/python";
 
 type TestData = typeof tests.$inferInsert;
+interface UploadFile {
+  name: string;
+  type: string;
+  uri: string;
+}
 
 // Function to convert base64/dataURL to Blob
 function dataURLtoBlob(dataurl: string) {
@@ -52,7 +57,7 @@ export const uploadTest = async (testData: TestData) => {
     });
     return { success: true, offline: true };
   }
-
+ 
   try {
     // Create FormData object
     const formData = new FormData();
@@ -66,24 +71,36 @@ export const uploadTest = async (testData: TestData) => {
     formData.append('createdAt', testData.createdAt);
     formData.append('createdBy', testData.createdBy);
     
-    // Add image data if present
     if (testData.onchoImage) {
-      const blob = dataURLtoBlob(testData.onchoImage);
-      formData.append('onchoImage', blob, 'onchoImage.jpg');
+      formData.append("onchoImage", {
+        uri: testData.onchoImage,
+        name: "oncho.jpg",
+        type: "image/jpeg",
+      } as any);
     }
     if (testData.schistoImage) {
-      const blob = dataURLtoBlob(testData.schistoImage);
-      formData.append('schistoImage', blob, 'schistoImage.jpg');
+      formData.append("schistoImage", {
+        uri: testData.schistoImage,
+        name: "schisto.jpg",
+        type: "image/jpeg",
+      } as any);
     }
-    if (testData.lfImage) {
-      const blob = dataURLtoBlob(testData.lfImage);
-      formData.append('lfImage', blob, 'lfImage.jpg');
+      if (testData.lfImage) {
+      formData.append("lfImage", {
+        uri: testData.lfImage,
+        name: "lf.jpg",
+        type: "image/jpeg",
+      } as any);
     }
     if (testData.helminthImage) {
-      const blob = dataURLtoBlob(testData.helminthImage);
-      formData.append('helminthImage', blob, 'helminthImage.jpg');
+      formData.append("helminthImage", {
+        uri: testData.helminthImage,
+        name: "helminth.jpg",
+        type: "image/jpeg",
+      } as any);
     }
-
+    
+    
     console.log("Sending request to:", API_ENDPOINT);
     console.log("FormData contents:", Object.fromEntries(formData.entries()));
     

@@ -33,25 +33,38 @@ const genderOptions = [
 export default function CreateTest() {
   const { user } = useAuthStore();
   const { control, handleSubmit, reset } = useForm<FormData>();
-  const [images, setImages] = useState<TestImages>({
-    oncho: null,
-    schisto: null,
-    lf: null,
-    helminth: null,
-  });
+  const [onchoImage, setOnchoImage] = useState<string | null>(null);
+  const [schistoImage, setSchistoImage] = useState<string | null>(null);
+  const [lfImage, setLfImage] = useState<string | null>(null);
+  const [helminthImage, setHelminthImage] = useState<string | null>(null);
+  // const [images, setImages] = useState({
+  //   oncho: null,
+  //   schisto: null,
+  //   lf: null,
+  //   helminth: null,
+  // });
+
 
   const pickImage = async (type: keyof TestImages) => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
+      base64: true,
     });
 
-    if (!result.canceled) {
-      setImages((prev) => ({
-        ...prev,
-        [type]: result.assets[0].uri,
-      }));
+    if (!result.canceled && result.assets[0]) {
+      const selectedImage = result.assets[0].uri;
+
+      if (type === "oncho") {
+        setOnchoImage(selectedImage);
+      } else if (type === "schisto") {
+        setSchistoImage(selectedImage);
+      } else if (type === "lf") {
+        setLfImage(selectedImage);
+      } else if (type === "helminth") {
+        setHelminthImage(selectedImage);
+      }
     }
   };
 
@@ -63,19 +76,15 @@ export default function CreateTest() {
         age: data.age,
         gender: data.gender,
         location: data.location,
+        onchoImage: onchoImage,
+        schistoImage: schistoImage,
+        lfImage: lfImage,
+        helminthImage: helminthImage,
+        createdBy: user?.email ?? "unknown",
         createdAt: new Date().toISOString(),
-        createdBy: user?.email,
-        onchoImage: images.oncho,
-        schistoImage: images.schisto,
-        lfImage: images.lf,
-        helminthImage: images.helminth,
       };
 
-      // Ensure createdBy is never undefined
-      const result = await uploadTest({
-        ...testData,
-        createdBy: user?.email ?? "unknown",
-      });
+      const result = await uploadTest(testData);
 
       if (result.offline) {
         Alert.alert(
@@ -84,21 +93,18 @@ export default function CreateTest() {
         );
       } else if (result.success) {
         Alert.alert("Success", "Test created and uploaded successfully!");
+        reset();
+        setOnchoImage(null);
+        setSchistoImage(null);
+        setLfImage(null);
+        setHelminthImage(null);
+        router.push("/(tabs)/tests");
       } else {
         Alert.alert(
           "Warning",
           "Test saved locally but upload failed. Will retry later."
         );
       }
-
-      // reset();
-      // setImages({
-      //   oncho: null,
-      //   schisto: null,
-      //   lf: null,
-      //   helminth: null,
-      // });
-      router.push("/(tabs)/tests");
     } catch (error) {
       console.error("Error saving test:", error);
       Alert.alert("Error", "Failed to save test");
@@ -214,9 +220,9 @@ export default function CreateTest() {
                 title="Pick Oncho Image"
                 onPress={() => pickImage("oncho")}
               />
-              {images.oncho && (
+              {onchoImage && (
                 <Image
-                  source={{ uri: images.oncho }}
+                  source={{ uri: onchoImage }}
                   style={{ width: 100, height: 100, marginTop: 10 }}
                 />
               )}
@@ -227,9 +233,9 @@ export default function CreateTest() {
                 title="Pick Schisto Image"
                 onPress={() => pickImage("schisto")}
               />
-              {images.schisto && (
+              {schistoImage && (
                 <Image
-                  source={{ uri: images.schisto }}
+                  source={{ uri: schistoImage }}
                   style={{ width: 100, height: 100, marginTop: 10 }}
                 />
               )}
@@ -237,9 +243,9 @@ export default function CreateTest() {
 
             <View style={{ marginBottom: 15 }}>
               <Button title="Pick LF Image" onPress={() => pickImage("lf")} />
-              {images.lf && (
+              {lfImage && (
                 <Image
-                  source={{ uri: images.lf }}
+                  source={{ uri: lfImage }}
                   style={{ width: 100, height: 100, marginTop: 10 }}
                 />
               )}
@@ -250,9 +256,9 @@ export default function CreateTest() {
                 title="Pick Helminth Image"
                 onPress={() => pickImage("helminth")}
               />
-              {images.helminth && (
+              {helminthImage && (
                 <Image
-                  source={{ uri: images.helminth }}
+                  source={{ uri: helminthImage }}
                   style={{ width: 100, height: 100, marginTop: 10 }}
                 />
               )}
